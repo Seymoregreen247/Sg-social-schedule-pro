@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Seymore Green post schedule</title>
+<meta name="theme-color" content="#4BBB2A">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{
+  --g:#4BBB2A; --bg:#1e1e1e; --card:#272727; --line:#3d3d3d; --amber:#F5B301;
+  --ink:#ffffff; --mute:#B6B6B6; --paper:#ffffff; --paper-ink:#1e1e1e;
+  --display:"Impact","Haettenschweiler","Arial Narrow Bold","Arial Black",sans-serif;
+  --body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.45;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.wrap{max-width:780px;margin:0 auto;padding:20px 16px 56px}
+h1,h2{font-family:var(--display);font-weight:400;letter-spacing:.01em;line-height:1.05;margin:0}
+h1{font-size:clamp(2.3rem,9vw,3.8rem)}
+h1 span{color:var(--g)}
+h2{font-size:1.7rem;margin-bottom:10px}
+p{margin:0 0 10px}
+[hidden]{display:none !important}
+.sub{color:var(--mute);margin:8px 0 0;max-width:52ch}
+:focus-visible{outline:3px solid var(--g);outline-offset:2px}
+
+/* missed banner */
+.missed{margin:22px 0 0;background:var(--card);border:1px solid #6b5a1e;border-left:6px solid var(--amber);border-radius:12px;padding:14px 14px 8px}
+.missed-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.missed-head h2{margin:0;color:var(--amber)}
+.missed-head .count{color:var(--mute);font-weight:600}
+.mrow{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;padding:11px 0;border-top:1px solid var(--line)}
+.mlabel{display:flex;gap:12px;align-items:flex-start;cursor:pointer;flex:1}
+.mlabel b{display:block}
+.mlabel .what{color:var(--mute);font-size:.92rem}
+.mlabel input,.row input{appearance:none;-webkit-appearance:none;flex:0 0 auto;width:26px;height:26px;margin:0;border-radius:7px;cursor:pointer;display:grid;place-content:center}
+.mlabel input{border:2.5px solid #fff;background:transparent}
+.mlabel input:checked,.row input:checked{background:var(--g)}
+.mlabel input:checked{border-color:var(--g)}
+.mlabel input:checked::after,.row input:checked::after{content:"";width:6px;height:12px;border:solid #1e1e1e;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.skip,.linkbtn{background:transparent;color:var(--mute);border:1px solid #555;border-radius:8px;padding:8px 12px;min-height:40px;font:600 .85rem var(--body);cursor:pointer}
+.mfoot{display:flex;gap:8px;flex-wrap:wrap;padding:10px 0 6px;border-top:1px solid var(--line)}
+
+/* day tabs */
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:22px 0 4px;-webkit-overflow-scrolling:touch}
+.tab{flex:1 0 auto;min-width:56px;min-height:48px;background:var(--card);color:var(--ink);border:2px solid var(--line);
+  border-radius:10px;font:600 .95rem var(--body);cursor:pointer;padding:6px 10px}
+.tab[aria-pressed="true"]{background:var(--g);color:#1e1e1e;border-color:var(--g)}
+.tab.is-today::after{content:"today";display:block;font-size:.68rem;font-weight:700;line-height:1;margin-top:2px}
+
+/* ticket */
+.ticket{background:var(--paper);color:var(--paper-ink);border-radius:12px;margin:14px 0 6px;overflow:hidden}
+.ticket-head{background:var(--g);padding:14px 18px 12px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.ticket-head h2{font-size:2.3rem;margin:0}
+.ticket-head .meta{font-weight:700;font-size:.92rem;text-align:right}
+.perf{position:relative;height:22px;background:var(--paper)}
+.perf::before{content:"";position:absolute;left:16px;right:16px;top:10px;border-top:2px dashed #c4c4c4}
+.perf i{position:absolute;top:1px;width:20px;height:20px;border-radius:50%;background:var(--bg)}
+.perf i:first-child{left:-10px}.perf i:last-child{right:-10px}
+.status{padding:0 18px 12px;font-weight:600}
+.row{display:grid;grid-template-columns:28px 78px 1fr;gap:12px;align-items:start;padding:13px 18px;border-top:1px solid #ececec;cursor:pointer}
+.row .time{font-weight:800;font-variant-numeric:tabular-nums;padding-top:2px}
+.row .plat{font-weight:700}
+.row .what{color:#4d4d4d;font-size:.94rem}
+.row.next{background:#eefae8;box-shadow:inset 5px 0 0 var(--g)}
+.chip{display:inline-block;background:#1e1e1e;color:#fff;font-size:.72rem;font-weight:700;border-radius:20px;padding:2px 9px;margin-left:8px;vertical-align:middle}
+.row.done .plat,.row.done .time,.row.done .what{color:#7a7a7a;text-decoration:line-through}
+.row input{border:2.5px solid #1e1e1e;background:#fff}
+.capbtn{margin-top:6px;background:#f0f0f0;color:#1e1e1e;border:1px solid #cfcfcf;border-radius:8px;padding:6px 11px;min-height:34px;font:700 .8rem var(--body);cursor:pointer}
+.empty{padding:16px 18px 22px;color:#4d4d4d}
+
+/* sections */
+section{margin-top:40px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px}
+.gridwrap{overflow-x:auto;border-radius:12px;border:1px solid var(--line);background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:.86rem}
+th,td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-weight:700;color:var(--mute);background:#222}
+tbody th{color:var(--ink);white-space:nowrap;position:sticky;left:0;background:#222}
+tr:last-child th,tr:last-child td{border-bottom:0}
+td.today,th.today{background:rgba(75,187,42,.16);color:var(--ink)}
+td.empty-cell{color:#5f5f5f}
+dl.info{margin:0}
+.info div{padding:14px 16px;border-bottom:1px solid var(--line)}
+.info div:last-child{border-bottom:0}
+.info dt{font-weight:800}
+.info dd{margin:2px 0 0;color:var(--mute)}
+.info dd b{color:var(--ink);font-weight:600}
+ul.rhythm{margin:0;padding:0;list-style:none}
+.rhythm li{padding:12px 16px;border-bottom:1px solid var(--line)}
+.rhythm li:last-child{border-bottom:0}
+.rhythm b{color:var(--g)}
+.note{border-left:5px solid var(--mute);background:var(--card);padding:14px 16px;border-radius:0 12px 12px 0}
+.note b{display:block;margin-bottom:4px}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 8px}
+.btn{background:var(--g);color:#1e1e1e;border:2px solid var(--g);border-radius:10px;padding:12px 16px;min-height:46px;font:800 .95rem var(--body);cursor:pointer;display:inline-flex;align-items:center}
+.btn.alt{background:transparent;color:var(--ink);border-color:#666}
+.btn.sm{min-height:40px;padding:8px 14px;font-size:.88rem}
+.small{color:var(--mute);font-size:.88rem}
+#msg{min-height:1.4em;color:var(--g);font-weight:600;margin-top:6px}
+footer{margin-top:40px;color:var(--mute);font-size:.88rem}
+
+/* caption bank */
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.fields label{display:block;font-weight:600;font-size:.88rem;color:var(--mute)}
+.fields input{width:100%;margin-top:4px;background:#191919;color:var(--ink);border:2px solid var(--line);border-radius:8px;padding:11px 12px;font:1rem var(--body)}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 12px}
+.pill{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:20px;padding:6px 13px;min-height:38px;font:600 .85rem var(--body);cursor:pointer}
+.pill[aria-pressed="true"]{background:var(--g);color:#1e1e1e;border-color:var(--g)}
+.cap{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;padding:14px 16px;border-bottom:1px solid var(--line)}
+.cap:last-child{border-bottom:0}
+.cap p{margin:0;flex:1;white-space:pre-wrap}
+.cap small{display:block;color:var(--mute);margin-top:4px}
+
+/* photo bank */
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:8px;margin-top:12px}
+.thumb{padding:0;border:0;background:#111;border-radius:10px;overflow:hidden;aspect-ratio:1;cursor:pointer}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.none{color:var(--mute);padding:18px;border:2px dashed var(--line);border-radius:12px;margin-top:12px}
+dialog{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:12px;width:min(94vw,640px)}
+dialog::backdrop{background:rgba(0,0,0,.75)}
+dialog img{display:block;max-width:100%;max-height:68vh;margin:0 auto;border-radius:8px}
+dialog .btns{justify-content:center}
+
+@media (max-width:480px){
+  .row{grid-template-columns:28px 66px 1fr;gap:10px;padding:12px 14px}
+  .ticket-head h2{font-size:2rem}
+  .fields{grid-template-columns:1fr}
+  .cap{flex-direction:column}
+}
+
+/* print: week grid + best times = one-page cheat sheet */
+@media print{
+  body{background:#fff;color:#000}
+  .noprint,.tabs,.ticket,#reminders,#missed,#captions,#photos{display:none !important}
+  .card,.gridwrap,.note{background:#fff;border-color:#999;color:#000}
+  th,tbody th{background:#eee;color:#000}
+  td.today,th.today{background:#fff}
+  .info dd,.info dd b,.small,.sub{color:#000}
+  .rhythm b,h1 span{color:#000}
+  table{min-width:0;font-size:.75rem}
+  section{margin-top:22px;break-inside:avoid}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Seymore Green<br><span>post schedule</span></h1>
+    <p class="sub">Best times to post, in Eastern time. Tap a day to see its plan and check off each post as you go.</p>
+    <div class="btns noprint">
+      <button class="btn alt" id="printBtn" type="button">Print the cheat sheet</button>
+      <button class="btn" id="installBtn" type="button" hidden>Install as an app</button>
+    </div>
+  </header>
+
+  <div class="missed noprint" id="missed" hidden aria-live="polite"></div>
+
+  <nav class="tabs noprint" id="tabs" aria-label="Pick a day"></nav>
+
+  <div class="ticket" id="ticket" aria-live="polite"></div>
+
+  <section id="week">
+    <h2>The week at a glance</h2>
+    <div class="gridwrap"><table id="grid"></table></div>
+    <p class="small" style="margin-top:8px">a = AM, p = PM. Stories go up every morning and after 5 PM.</p>
+  </section>
+
+  <section id="captions">
+    <h2>Caption bank</h2>
+    <p class="small">Tap Copy, paste into the app, post. Type this week's deal and code once and they fill in automatically.</p>
+    <div class="fields">
+      <label>This week's deal<input id="deal" type="text" placeholder="Buy 2 tees, get 1 free" autocomplete="off"></label>
+      <label>Promo code<input id="code" type="text" placeholder="ROZZIE10" autocomplete="off" autocapitalize="characters"></label>
+    </div>
+    <div class="pills" id="pills" role="group" aria-label="Caption type"></div>
+    <div class="card" id="capList"></div>
+  </section>
+
+  <section id="photos">
+    <h2>Photo bank</h2>
+    <p class="small">Keep your best shots here so there's always something ready to post. Photos stay on this device only.</p>
+    <div class="btns">
+      <button class="btn" id="addPhotos" type="button">Add photos</button>
+      <input id="photoIn" type="file" accept="image/*" multiple hidden>
+    </div>
+    <div class="gallery" id="gallery"></div>
+  </section>
+
+  <section id="best">
+    <h2>Best times by platform</h2>
+    <div class="card"><dl class="info" id="info"></dl></div>
+  </section>
+
+  <section id="rhythm">
+    <h2>Weekly rhythm</h2>
+    <div class="card"><ul class="rhythm">
+      <li><b>Monday:</b> promo push. Post this week's deal everywhere, with the code and payment QR.</li>
+      <li><b>Tuesday to Thursday:</b> live printing and behind-the-scenes. Show the design becoming a shirt.</li>
+      <li><b>Friday:</b> drops and "get it for the weekend" posts.</li>
+      <li><b>Reuse one video:</b> post it on TikTok first, then Reels a couple of hours later, then Shorts the next afternoon.</li>
+    </ul></div>
+  </section>
+
+  <section id="lane2">
+    <h2>Lane 2 (CBD/THCA) on social</h2>
+    <div class="note">
+      <b>Keep it educational and low-key.</b>
+      Meta and TikTok restrict cannabis and hemp content. Skip prices, "buy now" wording and product-for-sale photos on social.
+      Promote Lane 2 through Google Business, email/SMS and in-store signage. All products are 21+.
+    </div>
+  </section>
+
+  <section id="reminders">
+    <h2>Never forget a post</h2>
+    <p>Download the reminders once and your calendar will nudge you 10 minutes before every slot, every week, plus a 9 PM nightly "anything missed?" check. This works even when this page is closed.</p>
+    <div class="btns">
+      <button class="btn" id="icsKey" type="button">Calendar reminders: the 10 that matter most</button>
+      <button class="btn alt" id="icsAll" type="button">Calendar reminders: every slot</button>
+    </div>
+    <p class="small">Opens in Apple Calendar, Google Calendar and Outlook. Delete the events any time to stop them.</p>
+    <div class="btns">
+      <button class="btn alt" id="notifyBtn" type="button">Turn on pop-up alerts</button>
+    </div>
+    <p class="small">Pop-up alerts cover on-time posts and missed posts, but only while this page or the installed app is open. Stories are quick, so they never show up as missed.</p>
+    <div id="msg" role="status"></div>
+  </section>
+
+  <footer>
+    These times come from general benchmarks. Run them for 4 weeks, then check each platform's insights and swap in your own best times.
+  </footer>
+</div>
+
+<dialog id="viewer" aria-label="Photo">
+  <img id="viewerImg" alt="Saved photo">
+  <div class="btns">
+    <button class="btn" id="shareBtn" type="button">Share or save</button>
+    <button class="btn alt" id="delBtn" type="button">Delete</button>
+    <button class="btn alt" id="closeBtn" type="button">Close</button>
+  </div>
+</dialog>
+
+<script>
+/* ---------- data ---------- */
+var BASE_TITLE="Seymore Green post schedule";
+var GRACE=30; /* minutes after a slot before it counts as missed */
+var PLAT={ig:"Instagram",fb:"Facebook",tt:"TikTok",yt:"YouTube Shorts",x:"X",pin:"Pinterest",gbp:"Google Business"};
+var DAYS=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+var SHORT=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+var ICSDAY=["SU","MO","TU","WE","TH","FR","SA"];
+var S=[];
+function add(d,t,p,what,key,cap,story){S.push({d:d,t:t,p:p,what:what,key:!!key,cap:cap||"",story:!!story,id:d+"-"+t+"-"+p+"-"+S.length});}
+
+var storyAM=["Story: weekend vibe or a shop photo","Story: this week's promo with the code and QR","Story: what's printing today","Story: poll or question for Roslindale","Story: drop teaser","Story: countdown to the weekend","Story: repost customer photos"];
+var storyPM=["Story: week-ahead teaser","Story: promo reminder, ends soon","Story: finished shirt of the day","Story: behind the scenes","Story: teaser, drop lands tomorrow","Story: last call for weekend orders","Story: customer shout-out"];
+for(var i=0;i<7;i++){add(i,"08:00","ig",storyAM[i],i===1,"story",true);add(i,"17:30","ig",storyPM[i],false,"story",true);}
+
+/* Sunday */
+add(0,"15:00","yt","Short: best live-printing clip of the week",false,"printing");
+add(0,"19:30","tt","Sunday-evening video: behind the scenes or a pickup",true,"bts");
+add(0,"20:30","pin","Pin: a design or gift-idea graphic, link to tshirtsbysg.com",false,"pin");
+/* Monday: promo push */
+add(1,"08:30","x","Promo of the week with the link",false,"promo");
+add(1,"09:30","gbp","Google Business post: this week's promo",true,"gbp");
+/* Tuesday: live printing */
+add(2,"08:30","x","Quick photo or one-liner from the shop",false,"bts");
+add(2,"09:30","fb","Live-printing photo or short clip",false,"printing");
+add(2,"12:00","ig","Feed post: live printing, design to shirt",false,"printing");
+add(2,"19:00","tt","Live-printing video, shirt coming off the press",true,"printing");
+/* Wednesday: behind the scenes */
+add(3,"08:30","x","Quick photo or one-liner from the shop",false,"bts");
+add(3,"09:30","fb","Behind-the-scenes photo or clip",false,"bts");
+add(3,"12:00","ig","Feed post: shop, process, Roslindale",false,"bts");
+add(3,"19:00","tt","Behind-the-scenes video",true,"bts");
+add(3,"19:30","fb","Post in Roslindale and Boston community groups (follow each group's rules)",false,"group");
+/* Thursday: video day */
+add(4,"08:30","x","Drop teaser",false,"teaser");
+add(4,"09:00","gbp","Google Business post: new photos or an update",false,"gbp");
+add(4,"10:00","fb","Feed post: teaser for tomorrow's drop",false,"teaser");
+add(4,"12:00","ig","Feed post: drop preview",false,"teaser");
+add(4,"18:30","tt","Video of the week. Post it here first",true,"printing");
+add(4,"20:30","ig","Reel: the same video, a couple of hours after TikTok",true,"printing");
+/* Friday: drops */
+add(5,"08:30","x","Drop announcement with the link",false,"drop");
+add(5,"12:00","ig","Feed post: the drop, photo carousel",true,"drop");
+add(5,"15:00","yt","Short: the same video from Thursday",true,"printing");
+add(5,"19:00","ig","Reel: get it for the weekend",false,"drop");
+add(5,"20:30","pin","Pin: the drop, link to tshirtsbysg.com",false,"pin");
+/* Saturday */
+add(6,"15:00","yt","Short: a new clip or a repost",false,"bts");
+add(6,"20:30","pin","Pin: a design or gift-idea graphic",false,"pin");
+
+var INFO=[
+ ["Instagram","Feed: <b>Tue to Fri, 11 AM to 1 PM</b>. Reels: <b>Thu and Fri, 6 to 9 PM</b>. Stories: <b>daily, morning and after 5 PM</b>.","Best for live-printing photos and drops."],
+ ["TikTok","<b>Tue to Thu, 6 to 9 PM</b>, plus <b>Sunday evening</b>.","Live-printing videos. Post here first, then reuse the video."],
+ ["Facebook","<b>Tue to Thu, 9 AM to 12 PM</b>. Community groups in the <b>evening</b>.","Roslindale and Boston groups. Follow each group's rules."],
+ ["YouTube Shorts","<b>Fri to Sun, 2 to 5 PM</b>.","People scroll for entertainment on weekend afternoons."],
+ ["X","<b>Weekdays, 8 to 10 AM</b>.","Short posts, drop announcements, links."],
+ ["Pinterest","<b>Evenings and weekends, 8 to 11 PM</b>.","Good for designs and gift ideas."],
+ ["Google Business","<b>Monday or Thursday morning</b>. Do both if you can.","Drives local foot traffic to Poplar St."]
+];
+
+/* ---------- caption bank ---------- */
+var CATS=[["all","All"],["promo","Promo"],["printing","Live printing"],["bts","Behind the scenes"],["teaser","Teaser"],["drop","Drop"],["group","Community groups"],["gbp","Google Business"],["story","Stories"],["pin","Pinterest"],["tags","Hashtags"]];
+var CAPS=[
+ {c:"promo",t:"This week only: [DEAL]. Use code [CODE] at tshirtsbysg.com or come through 35 Poplar St. Rozzie, we got you.\n#Roslindale #Boston #617 #SeymoreGreen"},
+ {c:"promo",t:"Fresh deal just landed. [DEAL] through Sunday. Code [CODE]. Pay how you like: PayPal, Venmo or Cash App.\n#BostonStreetwear #CustomTees #Rozzie"},
+ {c:"printing",t:"Watch it happen. Design goes on, shirt comes off the press, ready to wear. Live printing at Seymore Green, Roslindale.\n#LivePrinting #DTF #CustomTees #Boston"},
+ {c:"printing",t:"Bring the idea, leave with the shirt. We print it while you watch. Fast turnaround, 35 Poplar St.\n#Roslindale #CustomApparel #617"},
+ {c:"bts",t:"Another day in the shop. Presses hot, orders moving. 19 years in Rozzie and we're just getting started.\n#Roslindale #SmallBusinessBoston #SeymoreGreen"},
+ {c:"bts",t:"Behind the scenes at Seymore Green. Homegrown, not mass-produced.\n#BostonMade #LocalPride #617"},
+ {c:"teaser",t:"Something new drops tomorrow. Turn on notifications and don't sleep on it.\n#SeymoreGreen #Boston #NewDrop"},
+ {c:"teaser",t:"Tomorrow. That's all we're saying. tshirtsbysg.com\n#Streetwear #Roslindale"},
+ {c:"drop",t:"It's here. The new drop is live at tshirtsbysg.com. Get yours before the weekend.\n#NewDrop #BostonStreetwear #SeymoreGreen"},
+ {c:"drop",t:"Fresh off the press and ready for your weekend. Grab it online or come see us at 35 Poplar St.\n#Roslindale #Streetwear #617"},
+ {c:"group",t:"Hey neighbors! Seymore Green here on Poplar St. We do custom tees, hoodies and beanies for teams, businesses, events and families. 6-piece minimum, fast turnaround. Message us for a quote. (Mods, happy to remove this if it's not allowed.)"},
+ {c:"group",t:"Roslindale friends: planning a team shirt, family reunion tee or business merch? We print right here in the neighborhood. Drop a comment or message us and we'll get you a quote."},
+ {c:"gbp",t:"This week at Seymore Green: [DEAL]. Stop by 35 Poplar St, Roslindale, or order online at tshirtsbysg.com."},
+ {c:"gbp",t:"Custom apparel for your team, event or business. Live printing, fast turnaround. Call (844) 473-9667 or stop by Poplar St."},
+ {c:"story",t:"Today's move: [DEAL]. Code [CODE]. Tap the link."},
+ {c:"story",t:"Poll: which design should we print next, A or B? Vote and we'll run the winner."},
+ {c:"story",t:"Customer fit check. Tag us in yours and we'll repost."},
+ {c:"pin",t:"Custom tee ideas and gift ideas from a Boston print shop. Shop at tshirtsbysg.com.\n#GiftIdeas #CustomTshirt #BostonGifts"},
+ {c:"tags",t:"#Roslindale #Rozzie #Boston #617 #BostonStreetwear #SeymoreGreen"},
+ {c:"tags",t:"#CustomTees #LivePrinting #DTF #CustomApparel #PrintShop #SmallBusinessBoston"}
+];
+var capFilter="all";
+
+/* ---------- helpers ---------- */
+function $(id){return document.getElementById(id);}
+function p2(n){return String(n).padStart(2,"0");}
+function fmt12(t){var a=t.split(":"),h=+a[0],m=a[1],ap=h>=12?"PM":"AM";h=h%12||12;return h+":"+m+" "+ap;}
+function fmtShort(t){var a=t.split(":"),h=+a[0],m=+a[1],ap=h>=12?"p":"a";h=h%12||12;return h+(m?":"+p2(m):"")+ap;}
+function minsOf(t){var a=t.split(":");return (+a[0])*60+(+a[1]);}
+function store(k,v){try{if(v===undefined){return localStorage.getItem(k);}localStorage.setItem(k,v);}catch(e){return null;}}
+function say(t){$("msg").textContent=t;}
+
+var today=new Date().getDay();
+var selected=today;
+var showAllMissed=false;
+var START=+store("sg-start")||Date.now();
+if(!store("sg-start"))store("sg-start",String(START));
+
+function weekKey(){var d=new Date();d.setDate(d.getDate()-d.getDay());return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();}
+function getMap(prefix){try{return JSON.parse(store(prefix+weekKey())||"{}");}catch(e){return {};}}
+function setMap(prefix,o){store(prefix+weekKey(),JSON.stringify(o));}
+function getDone(){return getMap("sg-done-");}
+function getSkip(){return getMap("sg-skip-");}
+function dayItems(d){return S.filter(function(x){return x.d===d;}).sort(function(a,b){return minsOf(a.t)-minsOf(b.t);});}
+function slotDate(x){var d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-today+x.d);var a=x.t.split(":");d.setHours(+a[0],+a[1],0,0);return d;}
+
+/* ---------- missed posts ---------- */
+function missed(){
+  var done=getDone(),skip=getSkip(),now=Date.now(),out=[];
+  S.forEach(function(x){
+    if(x.story||done[x.id]||skip[x.id])return;
+    var t=slotDate(x).getTime();
+    if(t>=START-60000&&t+GRACE*60000<=now)out.push({x:x,t:t});
+  });
+  out.sort(function(a,b){return b.t-a.t;});
+  return out;
+}
+function updateBadge(n){
+  document.title=(n?"("+n+") ":"")+BASE_TITLE;
+  try{if(navigator.setAppBadge){if(n)navigator.setAppBadge(n);else navigator.clearAppBadge();}}catch(e){}
+}
+function renderMissed(){
+  var list=missed(),el=$("missed"),n=list.length;
+  updateBadge(n);
+  if(!n){el.hidden=true;el.innerHTML="";return;}
+  el.hidden=false;
+  var show=showAllMissed?list:list.slice(0,4);
+  var html='<div class="missed-head"><h2>Missed posts</h2><span class="count">'+n+(n===1?' post':' posts')+' to catch up</span></div>';
+  show.forEach(function(m){
+    var x=m.x,when=(x.d===today?"Today":SHORT[x.d])+" "+fmt12(x.t);
+    html+='<div class="mrow"><label class="mlabel"><input type="checkbox" data-mdone="'+x.id+'" aria-label="Mark '+PLAT[x.p]+' post from '+when+' as done">'+
+      '<span><b>'+when+', '+PLAT[x.p]+'</b><span class="what">'+x.what+'</span></span></label>'+
+      '<button type="button" class="skip" data-skip="'+x.id+'">Skip</button></div>';
+  });
+  html+='<div class="mfoot">';
+  if(n>show.length)html+='<button type="button" class="linkbtn" id="moreMissed">Show '+(n-show.length)+' more</button>';
+  else if(showAllMissed&&n>4)html+='<button type="button" class="linkbtn" id="lessMissed">Show fewer</button>';
+  html+='<button type="button" class="linkbtn" id="skipAll">Skip all</button></div>';
+  el.innerHTML=html;
+  Array.prototype.forEach.call(el.querySelectorAll("[data-mdone]"),function(cb){
+    cb.onchange=function(){var o=getDone();o[cb.dataset.mdone]=1;setMap("sg-done-",o);render();};
+  });
+  Array.prototype.forEach.call(el.querySelectorAll("[data-skip]"),function(b){
+    b.onclick=function(){var o=getSkip();o[b.dataset.skip]=1;setMap("sg-skip-",o);render();};
+  });
+  var more=$("moreMissed"),less=$("lessMissed");
+  if(more)more.onclick=function(){showAllMissed=true;renderMissed();};
+  if(less)less.onclick=function(){showAllMissed=false;renderMissed();};
+  $("skipAll").onclick=function(){var o=getSkip();missed().forEach(function(m){o[m.x.id]=1;});setMap("sg-skip-",o);render();};
+}
+
+/* ---------- day tabs + ticket ---------- */
+function renderTabs(){
+  var el=$("tabs");el.innerHTML="";
+  SHORT.forEach(function(s,i){
+    var b=document.createElement("button");
+    b.type="button";b.className="tab"+(i===today?" is-today":"");
+    b.textContent=s;b.setAttribute("aria-pressed",i===selected?"true":"false");
+    b.onclick=function(){selected=i;render();};
+    el.appendChild(b);
+  });
+}
+
+function renderTicket(){
+  var items=dayItems(selected),done=getDone(),el=$("ticket");
+  var now=new Date(),nowM=now.getHours()*60+now.getMinutes();
+  var doneCount=items.filter(function(x){return done[x.id];}).length;
+  var nextId=null;
+  if(selected===today){
+    var n=items.filter(function(x){return !done[x.id]&&minsOf(x.t)>=nowM-GRACE;})[0];
+    if(n)nextId=n.id;
+  }
+  var d=new Date();d.setDate(d.getDate()+(selected-today));
+  var dateTxt=d.toLocaleDateString(undefined,{month:"short",day:"numeric"});
+  var status="";
+  if(selected===today){
+    if(items.length===0){status="Nothing scheduled today.";}
+    else if(doneCount===items.length){status="All posted for today. Nice work.";}
+    else if(nextId){
+      var nx=items.filter(function(x){return x.id===nextId;})[0],diff=minsOf(nx.t)-nowM;
+      var when=diff>0?("in "+(diff>=60?Math.floor(diff/60)+" hr"+(diff%60?" "+diff%60+" min":""):diff+" min")):(diff===0?"right now":"was "+(-diff)+" min ago");
+      status="Next up: "+PLAT[nx.p]+" at "+fmt12(nx.t)+", "+when+".";
+    } else {status="Today's window has passed. Anything unchecked shows in Missed posts above.";}
+  } else {status="Plan for "+DAYS[selected]+". Check posts off on the day.";}
+
+  var html='<div class="ticket-head"><h2>'+DAYS[selected]+'</h2><div class="meta">'+dateTxt+'<br>'+doneCount+' of '+items.length+' posted</div></div>'+
+           '<div class="perf" aria-hidden="true"><i></i><i></i></div>'+
+           '<div class="status">'+status+'</div>';
+  items.forEach(function(x){
+    var isDone=!!done[x.id],isNext=x.id===nextId;
+    html+='<label class="row'+(isDone?' done':'')+(isNext?' next':'')+'">'+
+      '<input type="checkbox" data-id="'+x.id+'"'+(isDone?' checked':'')+' aria-label="Posted on '+PLAT[x.p]+' at '+fmt12(x.t)+'">'+
+      '<span class="time">'+fmt12(x.t)+'</span>'+
+      '<span><span class="plat">'+PLAT[x.p]+'</span>'+(isNext?'<span class="chip">Next up</span>':'')+'<br><span class="what">'+x.what+'</span>'+
+      (x.cap?'<br><button type="button" class="capbtn" data-cap="'+x.cap+'">Get a caption</button>':'')+'</span></label>';
+  });
+  el.innerHTML=html;
+  Array.prototype.forEach.call(el.querySelectorAll("input[type=checkbox]"),function(cb){
+    cb.onchange=function(){var o=getDone();if(cb.checked)o[cb.dataset.id]=1;else delete o[cb.dataset.id];setMap("sg-done-",o);render();};
+  });
+  Array.prototype.forEach.call(el.querySelectorAll(".capbtn"),function(b){
+    b.onclick=function(e){e.preventDefault();capFilter=b.dataset.cap;renderCaps();$("captions").scrollIntoView({behavior:"smooth",block:"start"});};
+  });
+}
+
+/* ---------- week grid + info ---------- */
+function renderGrid(){
+  var h="<thead><tr><th>Platform</th>";
+  SHORT.forEach(function(s,i){h+='<th'+(i===today?' class="today"':'')+'>'+s+'</th>';});
+  h+="</tr></thead><tbody>";
+  Object.keys(PLAT).forEach(function(k){
+    h+="<tr><th scope=\"row\">"+PLAT[k]+"</th>";
+    for(var d=0;d<7;d++){
+      var times=dayItems(d).filter(function(x){return x.p===k;}).map(function(x){return fmtShort(x.t);});
+      h+='<td class="'+(d===today?'today':'')+(times.length?'':' empty-cell')+'">'+(times.length?times.join(", "):"-")+"</td>";
+    }
+    h+="</tr>";
+  });
+  $("grid").innerHTML=h+"</tbody>";
+}
+function renderInfo(){
+  $("info").innerHTML=INFO.map(function(r){return "<div><dt>"+r[0]+"</dt><dd>"+r[1]+"</dd><dd>"+r[2]+"</dd></div>";}).join("");
+}
+
+/* ---------- captions ---------- */
+function fillText(t){
+  var d=($("deal").value||"").trim(),c=($("code").value||"").trim();
+  return t.replace(/\[DEAL\]/g,d||"[DEAL]").replace(/\[CODE\]/g,c||"[CODE]");
+}
+function copyText(t,btn){
+  function ok(){btn.textContent="Copied";setTimeout(function(){btn.textContent="Copy";},1500);}
+  function fallback(){
+    var ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand("copy");ok();}catch(e){say("Couldn't copy. Press and hold the text to copy it.");}
+    ta.remove();
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fallback);}else{fallback();}
+}
+function renderCaps(){
+  var pills=$("pills");pills.innerHTML="";
+  CATS.forEach(function(c){
+    var b=document.createElement("button");b.type="button";b.className="pill";b.textContent=c[1];
+    b.setAttribute("aria-pressed",capFilter===c[0]?"true":"false");
+    b.onclick=function(){capFilter=c[0];renderCaps();};
+    pills.appendChild(b);
+  });
+  var list=$("capList");list.innerHTML="";
+  CAPS.filter(function(c){return capFilter==="all"||c.c===capFilter;}).forEach(function(c){
+    var row=document.createElement("div");row.className="cap";
+    var p=document.createElement("p");p.textContent=fillText(c.t);
+    var b=document.createElement("button");b.type="button";b.className="btn sm";b.textContent="Copy";
+    b.onclick=function(){copyText(fillText(c.t),b);};
+    row.appendChild(p);row.appendChild(b);list.appendChild(row);
+  });
+}
+$("deal").value=store("sg-deal")||"";
+$("code").value=store("sg-code")||"";
+$("deal").oninput=function(){store("sg-deal",$("deal").value);renderCaps();};
+$("code").oninput=function(){store("sg-code",$("code").value);renderCaps();};
+
+/* ---------- photo bank (IndexedDB) ---------- */
+var DB=null,urls=[],current=null;
+function openDB(){
+  return new Promise(function(res,rej){
+    try{
+      var r=indexedDB.open("sg-schedule",1);
+      r.onupgradeneeded=function(){r.result.createObjectStore("photos",{keyPath:"id"});};
+      r.onsuccess=function(){res(r.result);};
+      r.onerror=function(){rej(r.error);};
+    }catch(e){rej(e);}
+  });
+}
+function store_(mode){return DB.transaction("photos",mode).objectStore("photos");}
+function allPhotos(){return new Promise(function(res,rej){var q=store_("readonly").getAll();q.onsuccess=function(){res(q.result.sort(function(a,b){return b.added-a.added;}));};q.onerror=function(){rej(q.error);};});}
+function putPhoto(o){return new Promise(function(res,rej){var q=store_("readwrite").put(o);q.onsuccess=function(){res();};q.onerror=function(){rej(q.error);};});}
+function delPhoto(id){return new Promise(function(res,rej){var q=store_("readwrite").delete(id);q.onsuccess=function(){res();};q.onerror=function(){rej(q.error);};});}
+function shrink(file){
+  return new Promise(function(res,rej){
+    var url=URL.createObjectURL(file),img=new Image();
+    img.onload=function(){
+      var M=1600,s=Math.min(1,M/Math.max(img.width,img.height));
+      var c=document.createElement("canvas");c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);
+      var g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(img,0,0,c.width,c.height);
+      c.toBlob(function(b){URL.revokeObjectURL(url);if(b)res(b);else rej(new Error("blob"));},"image/jpeg",0.85);
+    };
+    img.onerror=function(){URL.revokeObjectURL(url);rej(new Error("read"));};
+    img.src=url;
+  });
+}
+function renderGallery(){
+  if(!DB){return;}
+  allPhotos().then(function(list){
+    urls.forEach(function(u){URL.revokeObjectURL(u);});urls=[];
+    var g=$("gallery");g.innerHTML="";
+    if(!list.length){g.className="";g.innerHTML='<div class="none">No photos yet. Add product shots and live-printing photos so they are ready to post.</div>';return;}
+    g.className="gallery";
+    list.forEach(function(ph){
+      var u=URL.createObjectURL(ph.blob);urls.push(u);
+      var b=document.createElement("button");b.type="button";b.className="thumb";b.setAttribute("aria-label","Open photo");
+      var im=document.createElement("img");im.src=u;im.alt="Saved photo";b.appendChild(im);
+      b.onclick=function(){current=ph;$("viewerImg").src=u;$("viewer").showModal();};
+      g.appendChild(b);
+    });
+  }).catch(function(){say("Couldn't load your photos in this browser.");});
+}
+$("addPhotos").onclick=function(){
+  if(!DB){say("Photo storage isn't available in this browser. Try Chrome or Safari.");return;}
+  $("photoIn").click();
+};
+$("photoIn").onchange=function(){
+  var files=Array.prototype.slice.call($("photoIn").files||[]);
+  if(!files.length)return;
+  say("Saving "+files.length+(files.length===1?" photo":" photos")+"...");
+  var saved=0,chain=Promise.resolve();
+  files.forEach(function(f,i){
+    chain=chain.then(function(){return shrink(f);}).then(function(b){
+      return putPhoto({id:Date.now()+"-"+i,blob:b,added:Date.now()+i}).then(function(){saved++;});
+    }).catch(function(){});
+  });
+  chain.then(function(){
+    $("photoIn").value="";
+    say(saved===files.length?"Saved "+saved+(saved===1?" photo.":" photos."):"Saved "+saved+" of "+files.length+". Some photos couldn't be read.");
+    renderGallery();
+  });
+};
+$("closeBtn").onclick=function(){$("viewer").close();};
+$("delBtn").onclick=function(){
+  if(!current||!confirm("Delete this photo?"))return;
+  delPhoto(current.id).then(function(){$("viewer").close();current=null;renderGallery();});
+};
+$("shareBtn").onclick=function(){
+  if(!current)return;
+  var file=null;
+  try{file=new File([current.blob],"seymore-green-photo.jpg",{type:"image/jpeg"});}catch(e){}
+  if(file&&navigator.canShare&&navigator.canShare({files:[file]})){
+    navigator.share({files:[file]}).catch(function(){});
+  } else {
+    var a=document.createElement("a");a.href=URL.createObjectURL(current.blob);a.download="seymore-green-photo.jpg";
+    document.body.appendChild(a);a.click();a.remove();
+  }
+};
+
+/* ---------- calendar reminders (.ics) ---------- */
+function nextDate(dayIdx,t){
+  var n=new Date(),a=t.split(":");
+  var d=new Date(n.getFullYear(),n.getMonth(),n.getDate(),+a[0],+a[1],0);
+  d.setDate(d.getDate()+((dayIdx-n.getDay()+7)%7));
+  if(d<n)d.setDate(d.getDate()+7);
+  return d;
+}
+function stamp(d){return d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate())+"T"+p2(d.getHours())+p2(d.getMinutes())+"00";}
+function esc(s){return String(s).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\n/g,"\\n");}
+function fold(l){if(l.length<=74)return l;var o=[l.slice(0,74)],i=74;while(i<l.length){o.push(" "+l.slice(i,i+73));i+=73;}return o.join("\r\n");}
+function buildICS(keyOnly){
+  var L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Seymore Green//Post Schedule//EN","CALSCALE:GREGORIAN","X-WR-CALNAME:SG post schedule"];
+  var now=new Date().toISOString().replace(/[-:]/g,"").split(".")[0]+"Z";
+  var list=S.filter(function(x){return keyOnly?x.key:true;});
+  list.forEach(function(x,i){
+    var s=nextDate(x.d,x.t),e=new Date(s.getTime()+15*60000);
+    L.push("BEGIN:VEVENT","UID:sg-post-"+i+"-"+x.d+"-"+x.t.replace(":","")+"-"+x.p+"@seymoregreen","DTSTAMP:"+now,
+      "DTSTART:"+stamp(s),"DTEND:"+stamp(e),"RRULE:FREQ=WEEKLY;BYDAY="+ICSDAY[x.d],
+      "SUMMARY:"+esc("Post on "+PLAT[x.p]),"DESCRIPTION:"+esc(x.what),
+      "BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:"+esc("Time to post on "+PLAT[x.p]),"TRIGGER:-PT10M","END:VALARM","END:VEVENT");
+  });
+  var ns=nextDate(new Date().getDay(),"21:00"),ne=new Date(ns.getTime()+15*60000);
+  L.push("BEGIN:VEVENT","UID:sg-nightly-check@seymoregreen","DTSTAMP:"+now,"DTSTART:"+stamp(ns),"DTEND:"+stamp(ne),
+    "RRULE:FREQ=DAILY","SUMMARY:"+esc("Check your posts: anything missed?"),
+    "DESCRIPTION:"+esc("Open the SG post schedule, check off what went out, and catch up on anything missed."),
+    "BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:Anything missed today?","TRIGGER:PT0M","END:VALARM","END:VEVENT");
+  L.push("END:VCALENDAR");
+  return {text:L.map(fold).join("\r\n")+"\r\n",count:list.length};
+}
+function download(keyOnly){
+  try{
+    var r=buildICS(keyOnly);
+    var blob=new Blob([r.text],{type:"text/calendar;charset=utf-8"});
+    var a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);a.download=keyOnly?"sg-post-reminders-key.ics":"sg-post-reminders-all.ics";
+    document.body.appendChild(a);a.click();a.remove();
+    say("Downloaded "+r.count+" weekly reminders plus a 9 PM nightly check. Open the file to add them to your calendar.");
+  }catch(e){say("Couldn't build the reminder file. Try a different browser.");}
+}
+$("icsKey").onclick=function(){download(true);};
+$("icsAll").onclick=function(){download(false);};
+
+/* ---------- pop-up alerts (page must be open) ---------- */
+var fired={},alerted={};
+function notifyOn(){return store("sg-notify")==="1"&&"Notification" in window&&Notification.permission==="granted";}
+function refreshNotifyBtn(){$("notifyBtn").textContent=notifyOn()?"Pop-up alerts are on (tap to turn off)":"Turn on pop-up alerts";}
+$("notifyBtn").onclick=function(){
+  try{
+    if(!("Notification" in window)){say("This browser can't show pop-up alerts. Use the calendar reminders instead.");return;}
+    if(notifyOn()){store("sg-notify","0");refreshNotifyBtn();say("Pop-up alerts are off.");return;}
+    Promise.resolve(Notification.requestPermission()).then(function(p){
+      if(p==="granted"){store("sg-notify","1");say("Pop-up alerts are on while this page is open.");}
+      else{say("Alerts were blocked. Use the calendar reminders, or allow notifications in your browser settings.");}
+      refreshNotifyBtn();
+    });
+  }catch(e){say("Pop-up alerts aren't available here. Use the calendar reminders instead.");}
+};
+function tick(){
+  var n=new Date(),hm=p2(n.getHours())+":"+p2(n.getMinutes());
+  var nd=n.getDay();
+  if(nd!==today){today=nd;selected=today;}
+  if(notifyOn()){
+    dayItems(today).forEach(function(x){
+      var k=n.toDateString()+x.id;
+      if(x.t===hm&&!fired[k]&&!getDone()[x.id]){
+        fired[k]=1;
+        try{new Notification("Time to post on "+PLAT[x.p],{body:x.what});}catch(e){}
+      }
+    });
+    var fresh=missed().filter(function(m){return !alerted[m.x.id];});
+    if(fresh.length){
+      fresh.forEach(function(m){alerted[m.x.id]=1;});
+      try{
+        new Notification(fresh.length===1?"Missed: post on "+PLAT[fresh[0].x.p]:fresh.length+" missed posts",
+          {body:fresh.length===1?fresh[0].x.what:"Open the schedule to catch up."});
+      }catch(e){}
+    }
+  }
+  var ae=document.activeElement;
+  var busy=ae&&ae.closest&&ae.closest("#ticket,#missed,#tabs");
+  if(!busy){render();}
+}
+setInterval(tick,20000);
+document.addEventListener("visibilitychange",function(){if(!document.hidden)tick();});
+
+/* ---------- print, install, service worker ---------- */
+$("printBtn").onclick=function(){window.print();};
+var deferred=null;
+window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();deferred=e;$("installBtn").hidden=false;});
+$("installBtn").onclick=function(){if(deferred){deferred.prompt();deferred=null;$("installBtn").hidden=true;}};
+if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){
+  window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});
+}
+
+function render(){renderMissed();renderTabs();renderTicket();renderGrid();}
+
+renderInfo();render();renderCaps();refreshNotifyBtn();
+openDB().then(function(db){DB=db;renderGallery();}).catch(function(){
+  $("gallery").innerHTML='<div class="none">Photo storage isn\'t available in this browser. Try Chrome or Safari, or open the deployed link.</div>';
+});
+</script>
+</body>
+</html>
